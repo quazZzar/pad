@@ -5,6 +5,14 @@ var PORT = 3000;
 
 // in acest array salvam fiecare client
 var clients = [];
+var messages = {queue:[]};
+
+function Message (queue, type, message, error) {
+    this.queue = queue;
+    this.type = type;
+    this.text = message;
+    this.error = error;
+}
 
 // Cream o instanta de server si legam portul de ea.
 // Functia din net.CreateServer() devine handler pentru evenimentul 'connection'
@@ -24,18 +32,19 @@ net.createServer(function(socket) {
     
     // Adaugam un handler pentru 'data' event al aceastei instante de socket
     socket.on('data', function(data) {
-    
-       var mess = {};
-      	mess.sender = socket.name;
-      	mess.text = data.toString();
-     
-       	var json = JSON.stringify(mess);
-
-        fs.writeFile('messages.json', json, 'utf8');
-  
-        // scriem date pentru socket, clientul va primi datele ca date de la server
-        broadcast(socket.name + ": " + data +"\n", socket);
         
+        primit = JSON.parse(data);
+        if(primit.type == 'post'){
+          messages.queue.push(primit.text);
+         	var json = JSON.stringify(messages);
+          fs.writeFile('messages.txt', json, 'utf8');
+          // scriem date pentru socket, clientul va primi datele ca date de la server
+          broadcast(socket.name + ": " + primit.text +"\n", socket);
+        } else if(primit.type == "get"){
+          console.log('reciever conectat');
+          socket.write(messages);
+        }
+        //console.log(primit.text);
     });
 
     // Remove the client from the list when it leaves

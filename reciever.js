@@ -13,17 +13,12 @@ function Message (queue, type, message, error) {
 }
 
 client.connect(PORT, HOST, function() {
-        console.log('CONECTAT LA: ' + HOST + ':' + PORT);
-	});
-         
-    var mesaj = "Mesaj foarte lung";
-    var mess = new Message("queue", "post", mesaj, "");
-            setInterval(function(){ 
-                client.write(JSON.stringify(mess));
-            }, 1000);
 
-	// Adaugam un handler pt evenimentul 'data'
-	// data este ceea ce serverul transmite catre socket
+    var mesaj = 'CONECTAT LA: ' + HOST + ':' + PORT;
+    var mess = new Message("queue", "get", mesaj, "");
+        client.write(JSON.stringify(mess)); 
+	});
+
 	client.on('data', function(data) {
 	    console.log(data.toString());
 	});
