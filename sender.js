@@ -5,8 +5,8 @@ var PORT = 3000;
 var client = new net.Socket();
 var i = 1;
 
-function Message (queue, type, message, error) {
-    this.queue = queue;
+function Message (type, message, error) {
+
     this.type = type;
     this.text = message;
     this.error = error;
@@ -17,7 +17,7 @@ client.connect(PORT, HOST, function() {
 	});
          
     var mesaj = "Mesaj foarte lung";
-    var mess = new Message("queue", "post", mesaj, "");
+    var mess = new Message("post", mesaj, "");
             setInterval(function(){ 
                 client.write(JSON.stringify(mess));
             }, 1000);
